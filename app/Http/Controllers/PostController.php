@@ -19,21 +19,36 @@ class PostController extends Controller
 
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
 
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title'=> 'required|max:255',
+            'short_content'=> 'required',
+            'content'=> 'required',
+        ]);
+
+
+        $post = Post::create([
+            'title' => $request->title,
+            'short_content' => $request->short_content,
+            'content' => $request->content,
+        ]);
+
+        return redirect()->route('posts.index');
     }
 
 
     public function show(Post $post)
     {
         return view('posts.show')->with([
+
             'post' => $post,
             'recent_posts' => Post::latest()->get()->except($post->id)->take(5)
+
         ]);
     }
 
