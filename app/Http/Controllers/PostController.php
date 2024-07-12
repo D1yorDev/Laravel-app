@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePostRequest;
 use App\Models\Post;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -9,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
-
     public function index()
     {
         $posts = Post::all();
@@ -22,16 +22,8 @@ class PostController extends Controller
         return view('posts.create');
     }
 
-
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-        $request->validate([
-            'title'=> 'required|max:255',
-            'short_content'=> 'required',
-            'content'=> 'required',
-        ]);
-
-
         $post = Post::create([
             'title' => $request->title,
             'short_content' => $request->short_content,
@@ -41,29 +33,26 @@ class PostController extends Controller
         return redirect()->route('posts.index');
     }
 
-
     public function show(Post $post)
     {
         return view('posts.show')->with([
-
             'post' => $post,
-            'recent_posts' => Post::latest()->get()->except($post->id)->take(5)
-
+            'recent_posts' => Post::latest()
+                ->get()
+                ->except($post->id)
+                ->take(5),
         ]);
     }
-
 
     public function edit(string $id)
     {
         //
     }
 
-
     public function update(Request $request, string $id)
     {
         //
     }
-
 
     public function destroy(string $id)
     {
