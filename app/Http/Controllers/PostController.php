@@ -7,6 +7,7 @@ use App\Models\Post;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -24,10 +25,17 @@ class PostController extends Controller
 
     public function store(StorePostRequest $request)
     {
+        if ($request->hasFile('photo')) {
+
+            $name = $request->file('photo')->getClientOriginalName();
+            $paht = $request->file('photo')->storeAs('post-photos', $name);
+        }
+
         $post = Post::create([
             'title' => $request->title,
             'short_content' => $request->short_content,
             'content' => $request->content,
+            'photo' => $paht ?? null,
         ]);
 
         return redirect()->route('posts.index');
@@ -44,17 +52,35 @@ class PostController extends Controller
         ]);
     }
 
-    public function edit(string $id)
+    public function edit(Post $post)
     {
-        //
+        return view('posts.edit')->with(['post' => $post]);
     }
 
-    public function update(Request $request, string $id)
+    public function update(StorePostRequest $request, Post $post)
     {
-        //
+        if ($request->hasFile('photo')) {
+
+            if (isset($post->photo)) {
+                Storage::delete($post->photo);
+            }
+
+            $name = $request->file('photo')->getClientOriginalName();
+            $name = $request->file('photo')->getClientOriginalName();
+            $paht = $request->file('photo')->storeAs('post-photos', $name);
+        }
+
+        $post->update([
+            'title' => $request->title,
+            'short_content' => $request->short_content,
+            'content' => $request->content,
+            'photo' => $paht ?? $post->photo,
+        ]);
+
+        return redirect()->route('posts.show', ['post' => $post->id]);
     }
 
-    public function destroy(string $id)
+    public function destroy(Post $post)
     {
         //
     }

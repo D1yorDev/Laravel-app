@@ -22,7 +22,7 @@
                     </div>
                 @endif --}}
 
-                <form action="{{ route('posts.store') }}" method="POST">
+                <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     <div class="control-group mb-4">
@@ -41,16 +41,20 @@
                     </div>
 
                     <div class="control-group mb-4">
-                        <textarea class="form-control p-4" rows="6" id="message" name="content" placeholder="Maqola">{{ old('content ') }}</textarea>
+                        <textarea class="form-control p-4" rows="6" id="message" name="content" placeholder="Maqola">{{ old('content') }}</textarea>
                         @error('content')
                             <div class="alert text-danger">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    {{-- <div class="control-group">
-                        <input type="file" class="form-control p-4" placeholder="Rasm" />
-                        <p class="help-block text-danger"></p>
-                    </div> --}}
+                    <div class="control-group mb-4">
+                        <input type="file" name="photo" class="form-control" placeholder="Rasm" />
+
+                        @error('photo')
+                            <div class="alert text-danger">{{ $message }}</div>
+                        @enderror
+
+                    </div>
 
                     <div>
                         <button class="btn btn-primary btn-block py-3 px-5" type="submit">Saqlash</button>
